@@ -7,6 +7,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,37 +41,29 @@ fun HomeScreen() {
     val context = LocalContext.current
     var showMenu by remember { mutableStateOf(false) }
 
-    Surface(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Surface(modifier = Modifier.fillMaxSize()) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
-                        listOf(
-                            Color(0xFFFFFDD0),
-                            Color(0xFFFFE4E1)
-                        )
+                        listOf(Color(0xFFFFFDD0), Color(0xFFFFE4E1))
                     )
                 )
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 24.dp, vertical = 32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(horizontal = 24.dp, vertical = 16.dp),
             ) {
-
-                // Top Row: Profile Icon (Dropdown menu)
+                // Profile Menu Top Left
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.TopStart
                 ) {
                     IconButton(onClick = { showMenu = true }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_person),
+                            imageVector = Icons.Filled.Person,
                             contentDescription = "Profile",
                             tint = MaterialTheme.colorScheme.onBackground
                         )
@@ -92,13 +86,13 @@ fun HomeScreen() {
                             onClick = {
                                 showMenu = false
                                 Toast.makeText(context, "Privacy Policy", Toast.LENGTH_SHORT).show()
-                                // TODO: Show PrivacyPolicyActivity or Dialog
+                                // TODO: Navigate to PrivacyPolicyActivity
                             }
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
                     text = "Welcome to NutriFit!",
@@ -106,11 +100,13 @@ fun HomeScreen() {
                     color = MaterialTheme.colorScheme.onBackground
                 )
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                // Scrollable Column for cards
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     FeatureCard(
                         title = "Meals",
@@ -129,6 +125,24 @@ fun HomeScreen() {
                             // TODO: Navigate to WorkoutPlannerActivity
                         }
                     )
+
+                    FeatureCard(
+                        title = "Nutrition Tips",
+                        imageRes = R.drawable.nutrition, // ← Add this image
+                        onClick = {
+                            Toast.makeText(context, "Navigate to Nutrition Tips", Toast.LENGTH_SHORT).show()
+                            // TODO: Navigate to NutritionTipsActivity
+                        }
+                    )
+
+                    FeatureCard(
+                        title = "Progress Tracker",
+                        imageRes = R.drawable.progress, // ← Add this image
+                        onClick = {
+                            Toast.makeText(context, "Navigate to Progress Tracker", Toast.LENGTH_SHORT).show()
+                            // TODO: Navigate to ProgressTrackerActivity
+                        }
+                    )
                 }
             }
         }
@@ -136,44 +150,44 @@ fun HomeScreen() {
 }
 
 
+
 @Composable
 fun FeatureCard(
     title: String,
     imageRes: Int,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-        .width(160.dp)
-        .height(180.dp)
+    onClick: () -> Unit
 ) {
     Card(
-        modifier = modifier
-            .padding(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(180.dp),
         shape = MaterialTheme.shapes.extraLarge,
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         onClick = onClick
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Image(
                 painter = painterResource(id = imageRes),
                 contentDescription = "$title Icon",
                 modifier = Modifier
-                    .size(80.dp)
+                    .size(100.dp)
             )
 
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
     }
 }
+
 
 
 @Preview(showBackground = true)
