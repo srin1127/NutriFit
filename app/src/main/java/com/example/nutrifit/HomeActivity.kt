@@ -61,58 +61,64 @@ fun HomeScreen() {
                     )
                 )
         ) {
+
+
+            // Main Content (under the top padding)
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 24.dp, vertical = 16.dp),
+                    .padding(horizontal = 24.dp, vertical = 64.dp), // Padding to avoid overlapping the top bar
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Profile Menu Top Left
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.TopStart
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 24.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    IconButton(onClick = { showMenu = true }) {
-                        Icon(
-                            imageVector = Icons.Filled.Person,
-                            contentDescription = "Profile",
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
+                    Text(
+                        text = "Welcome to NutriFit!",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
 
-                    DropdownMenu(
-                        expanded = showMenu,
-                        onDismissRequest = { showMenu = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("Edit Profile") },
-                            onClick = {
-                                showMenu = false
-                                context.startActivity(Intent(context, EditProfileActivity::class.java))
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Privacy Policy") },
-                            onClick = {
-                                showMenu = false
-                                context.startActivity(Intent(context, PrivacyPolicyActivity::class.java))
-                            }
-                        )
+                    Box {
+                        IconButton(onClick = { showMenu = true }) {
+                            Icon(
+                                imageVector = Icons.Filled.Person,
+                                contentDescription = "Profile",
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Edit Profile") },
+                                onClick = {
+                                    showMenu = false
+                                    context.startActivity(Intent(context, EditProfileActivity::class.java))
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Privacy Policy") },
+                                onClick = {
+                                    showMenu = false
+                                    context.startActivity(Intent(context, PrivacyPolicyActivity::class.java))
+                                }
+                            )
+                        }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
 
-                Text(
-                    text = "Welcome to NutriFit!",
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Scrollable Column for cards
                 Column(
-                    modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -152,6 +158,8 @@ fun HomeScreen() {
         }
     }
 }
+
+
 
 
 

@@ -20,6 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.nutrifit.screens.PrivacyPolicyActivity
 import com.example.nutrifit.ui.theme.NutrifitTheme
 import com.google.firebase.auth.FirebaseAuth
 
@@ -41,13 +42,12 @@ fun LoginScreen() {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-
     var emailError by remember { mutableStateOf(false) }
     var passwordError by remember { mutableStateOf(false) }
 
-    Surface(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    var showGdprDialog by remember { mutableStateOf(true) }
+
+    Surface(modifier = Modifier.fillMaxSize()) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -134,8 +134,6 @@ fun LoginScreen() {
                                     if (task.isSuccessful) {
                                         Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
                                         context.startActivity(Intent(context, HomeActivity::class.java))
-                                        // Optionally finish LoginActivity if needed:
-                                        // (context as? Activity)?.finish()
                                     } else {
                                         Toast.makeText(
                                             context,
@@ -151,22 +149,44 @@ fun LoginScreen() {
                     Text("Login")
                 }
 
-
-
                 Spacer(modifier = Modifier.height(12.dp))
-
-                val context = LocalContext.current
 
                 TextButton(onClick = {
                     context.startActivity(Intent(context, RegisterActivity::class.java))
                 }) {
                     Text("Don't have an account? Sign up")
                 }
+            }
 
+            // GDPR Consent Dialog
+            if (showGdprDialog) {
+                AlertDialog(
+                    onDismissRequest = { showGdprDialog = false },
+                    confirmButton = {
+                        TextButton(onClick = { showGdprDialog = false }) {
+                            Text("Accept")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = {
+                            showGdprDialog = false
+                            context.startActivity(Intent(context, PrivacyPolicyActivity::class.java))
+                        }) {
+                            Text("Learn More")
+                        }
+                    },
+                    title = { Text("GDPR Consent") },
+                    text = {
+                        Text(
+                            "We value your privacy. By continuing, you agree to our collection of data for the purpose of improving your fitness experience. You can read more in our Privacy Policy."
+                        )
+                    }
+                )
             }
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
