@@ -21,6 +21,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.nutrifit.ui.theme.NutrifitTheme
+import com.google.firebase.auth.FirebaseAuth
+
 
 class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -119,20 +121,37 @@ fun LoginScreen() {
 
                 Spacer(modifier = Modifier.height(24.dp))
 
+                val auth = FirebaseAuth.getInstance()
+
                 Button(
                     onClick = {
                         emailError = !Patterns.EMAIL_ADDRESS.matcher(email).matches()
                         passwordError = password.length < 6
 
                         if (!emailError && !passwordError) {
-                            // TODO: Hook up Firebase auth
-                            Toast.makeText(context, "Login successful (stub)", Toast.LENGTH_SHORT).show()
+                            auth.signInWithEmailAndPassword(email, password)
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+                                        context.startActivity(Intent(context, HomeActivity::class.java))
+                                        // Optionally finish LoginActivity if needed:
+                                        // (context as? Activity)?.finish()
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "Login failed: ${task.exception?.message}",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                }
                         }
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Login")
                 }
+
+
 
                 Spacer(modifier = Modifier.height(12.dp))
 

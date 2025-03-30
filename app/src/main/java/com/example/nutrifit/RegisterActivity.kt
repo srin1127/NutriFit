@@ -20,6 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.nutrifit.ui.theme.NutrifitTheme
+import com.google.firebase.auth.FirebaseAuth
 
 class RegisterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -149,6 +150,9 @@ fun RegisterScreen() {
 
                 Spacer(modifier = Modifier.height(24.dp))
 
+                //val context = LocalContext.current
+                val auth = FirebaseAuth.getInstance()
+
                 Button(
                     onClick = {
                         emailError = !Patterns.EMAIL_ADDRESS.matcher(email).matches()
@@ -156,14 +160,30 @@ fun RegisterScreen() {
                         confirmPasswordError = password != confirmPassword
 
                         if (!emailError && !passwordError && !confirmPasswordError) {
-                            // TODO: Firebase registration logic
-                            Toast.makeText(context, "Registered (stub)", Toast.LENGTH_SHORT).show()
+                            auth.createUserWithEmailAndPassword(email, password)
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        Toast.makeText(context, "Registration successful", Toast.LENGTH_SHORT).show()
+                                        context.startActivity(Intent(context, LoginActivity::class.java))
+
+                                        // Optional: close RegisterActivity to prevent going back
+                                        // (context as? Activity)?.finish()
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "Registration failed: ${task.exception?.message}",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                }
                         }
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Register")
                 }
+
+
 
                 Spacer(modifier = Modifier.height(12.dp))
 
