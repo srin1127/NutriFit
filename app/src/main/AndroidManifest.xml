@@ -38,6 +38,37 @@
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Nutrifit"/>
+        <activity
+            android:name=".EditProfileActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Nutrifit"/>
+        <activity
+            android:name=".MealBreakdownActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Nutrifit"/>
+        <activity
+            android:name=".NutritionTipsActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Nutrifit"/>
+        <activity
+            android:name=".PrivacyPolicyActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Nutrifit"/>
+        <activity
+            android:name=".ProgressTrackerActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Nutrifit"/>
+        <activity
+            android:name=".WorkoutPlannerActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Nutrifit"/>
+
 
     </application>
 

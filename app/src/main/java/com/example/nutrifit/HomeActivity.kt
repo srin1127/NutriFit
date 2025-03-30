@@ -1,5 +1,6 @@
 package com.example.nutrifit
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -26,6 +27,13 @@ import androidx.compose.ui.unit.dp
 import com.example.nutrifit.ui.theme.NutrifitTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import com.example.nutrifit.screens.EditProfileActivity
+import com.example.nutrifit.screens.MealBreakdownActivity
+import com.example.nutrifit.screens.NutritionTipsActivity
+import com.example.nutrifit.screens.PrivacyPolicyActivity
+import com.example.nutrifit.screens.ProgressTrackerActivity
+import com.example.nutrifit.screens.WorkoutPlannerActivity
 
 class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,16 +87,14 @@ fun HomeScreen() {
                             text = { Text("Edit Profile") },
                             onClick = {
                                 showMenu = false
-                                Toast.makeText(context, "Edit Profile", Toast.LENGTH_SHORT).show()
-                                // TODO: Navigate to EditProfileActivity
+                                context.startActivity(Intent(context, EditProfileActivity::class.java))
                             }
                         )
                         DropdownMenuItem(
                             text = { Text("Privacy Policy") },
                             onClick = {
                                 showMenu = false
-                                Toast.makeText(context, "Privacy Policy", Toast.LENGTH_SHORT).show()
-                                // TODO: Navigate to PrivacyPolicyActivity
+                                context.startActivity(Intent(context, PrivacyPolicyActivity::class.java))
                             }
                         )
                     }
@@ -111,38 +117,34 @@ fun HomeScreen() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     FeatureCard(
-                        title = "Meals",
+                        title = "Meals Breakdown",
                         imageRes = R.drawable.meal,
                         onClick = {
-                            Toast.makeText(context, "Navigate to Meal Breakdown", Toast.LENGTH_SHORT).show()
-                            // TODO: Navigate to MealBreakdownActivity
+                            context.startActivity(Intent(context, MealBreakdownActivity::class.java))
                         }
                     )
 
                     FeatureCard(
-                        title = "Workout",
+                        title = "Workout Planner",
                         imageRes = R.drawable.workout,
                         onClick = {
-                            Toast.makeText(context, "Navigate to Workout Planner", Toast.LENGTH_SHORT).show()
-                            // TODO: Navigate to WorkoutPlannerActivity
+                            context.startActivity(Intent(context, WorkoutPlannerActivity::class.java))
                         }
                     )
 
                     FeatureCard(
                         title = "Nutrition Tips",
-                        imageRes = R.drawable.nutrition, // ← Add this image
+                        imageRes = R.drawable.nutrition,
                         onClick = {
-                            Toast.makeText(context, "Navigate to Nutrition Tips", Toast.LENGTH_SHORT).show()
-                            // TODO: Navigate to NutritionTipsActivity
+                            context.startActivity(Intent(context, NutritionTipsActivity::class.java))
                         }
                     )
 
                     FeatureCard(
                         title = "Progress Tracker",
-                        imageRes = R.drawable.progress, // ← Add this image
+                        imageRes = R.drawable.progress,
                         onClick = {
-                            Toast.makeText(context, "Navigate to Progress Tracker", Toast.LENGTH_SHORT).show()
-                            // TODO: Navigate to ProgressTrackerActivity
+                            context.startActivity(Intent(context, ProgressTrackerActivity::class.java))
                         }
                     )
                 }
@@ -150,6 +152,7 @@ fun HomeScreen() {
         }
     }
 }
+
 
 
 
@@ -162,36 +165,43 @@ fun FeatureCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(220.dp),
-        shape = MaterialTheme.shapes.extraLarge,
+            .height(180.dp),
+        shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
-        onClick = onClick,
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF6F6F6))
+        onClick = onClick
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly
-        ) {
+        Box(modifier = Modifier.fillMaxSize()) {
             Image(
                 painter = painterResource(id = imageRes),
                 contentDescription = "$title Image",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(140.dp)
-                    .clip(RoundedCornerShape(16.dp)) // 🎉 Rounded image!
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(20.dp)),
+                contentScale = ContentScale.Crop // Fills the entire card
             )
 
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            // Text Overlay
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomStart)
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(Color.Transparent, Color.Black.copy(alpha = 0.6f))
+                        )
+                    )
+                    .padding(12.dp)
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.White
+                )
+            }
         }
     }
 }
+
 
 
 
