@@ -1,5 +1,6 @@
 package com.example.nutrifit
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
@@ -132,6 +133,9 @@ fun LoginScreen() {
                             auth.signInWithEmailAndPassword(email, password)
                                 .addOnCompleteListener { task ->
                                     if (task.isSuccessful) {
+                                        val prefs = context.getSharedPreferences("nutrifit_prefs", Context.MODE_PRIVATE)
+                                        prefs.edit().putBoolean("is_logged_in", true).apply()
+
                                         Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
                                         context.startActivity(Intent(context, HomeActivity::class.java))
                                     } else {
