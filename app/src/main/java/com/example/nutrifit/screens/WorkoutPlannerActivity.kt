@@ -50,7 +50,7 @@ fun WorkoutPlannerScreen() {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .padding(WindowInsets.systemBars.asPaddingValues())
             ) {
                 Text(
                     text = "Workout Planner",
@@ -70,6 +70,7 @@ fun WorkoutPlannerScreen() {
         }
     }
 }
+
 
 data class WorkoutItem(
     val title: String,

@@ -32,10 +32,10 @@ class ProgressTrackerActivity : ComponentActivity() {
 @Composable
 fun ProgressTrackerScreen() {
     val progressList = listOf(
-        ProgressItem("Workouts Completed", "This week", 0.8f), // 80%
-        ProgressItem("Meals Logged", "This week", 0.65f),     // 65%
-        ProgressItem("Water Intake", "Today", 0.5f),          // 50%
-        ProgressItem("Sleep Goal", "Avg this week", 0.9f)     // 90%
+        ProgressItem("Workouts Completed", "This week", 0.8f),
+        ProgressItem("Meals Logged", "This week", 0.65f),
+        ProgressItem("Water Intake", "Today", 0.5f),
+        ProgressItem("Sleep Goal", "Avg this week", 0.9f)
     )
 
     Surface(modifier = Modifier.fillMaxSize()) {
@@ -51,7 +51,7 @@ fun ProgressTrackerScreen() {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .padding(WindowInsets.systemBars.asPaddingValues())
             ) {
                 Text(
                     text = "Progress Tracker",
@@ -71,6 +71,7 @@ fun ProgressTrackerScreen() {
         }
     }
 }
+
 
 data class ProgressItem(
     val title: String,

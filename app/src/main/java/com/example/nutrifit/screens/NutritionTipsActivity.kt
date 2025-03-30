@@ -52,7 +52,9 @@ fun NutritionTipsScreen() {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .padding(
+                        WindowInsets.systemBars.asPaddingValues()
+                    )
             ) {
                 Text(
                     text = "Nutrition Tips",
@@ -72,6 +74,7 @@ fun NutritionTipsScreen() {
         }
     }
 }
+
 
 data class NutritionTip(
     val title: String,

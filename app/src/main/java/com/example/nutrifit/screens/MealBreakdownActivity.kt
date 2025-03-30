@@ -50,7 +50,9 @@ fun MealBreakdownScreen() {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .padding(
+                        WindowInsets.systemBars.asPaddingValues()
+                    )
             ) {
                 Text(
                     text = "Meal Breakdown",
@@ -70,6 +72,7 @@ fun MealBreakdownScreen() {
         }
     }
 }
+
 
 data class MealItem(
     val mealType: String,
