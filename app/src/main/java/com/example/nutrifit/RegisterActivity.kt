@@ -18,34 +18,34 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.nutrifit.ui.theme.NutrifitTheme
 
-class LoginActivity : ComponentActivity() {
+class RegisterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             NutrifitTheme {
-                LoginScreen()
+                RegisterScreen()
             }
         }
     }
 }
 
 @Composable
-fun LoginScreen() {
+fun RegisterScreen() {
     val context = LocalContext.current
 
+    var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
 
     var emailError by remember { mutableStateOf(false) }
     var passwordError by remember { mutableStateOf(false) }
+    var confirmPasswordError by remember { mutableStateOf(false) }
 
-    Surface(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Surface(modifier = Modifier.fillMaxSize()) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -53,7 +53,7 @@ fun LoginScreen() {
                     Brush.verticalGradient(
                         colors = listOf(
                             Color(0xFFFFFDD0), // Cream
-                            Color(0xFFFFE4E1)  // Blush pink
+                            Color(0xFFFFE4E1)  // Blush
                         )
                     )
                 ),
@@ -66,12 +66,22 @@ fun LoginScreen() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Welcome Back!",
+                    text = "Create Account",
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onBackground
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Full Name") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
 
                 OutlinedTextField(
                     value = email,
@@ -85,10 +95,9 @@ fun LoginScreen() {
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     modifier = Modifier.fillMaxWidth()
                 )
-
                 if (emailError) {
                     Text(
-                        text = "Invalid email address",
+                        text = "Invalid email format",
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall
                     )
@@ -108,10 +117,31 @@ fun LoginScreen() {
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth()
                 )
-
                 if (passwordError) {
                     Text(
                         text = "Password must be at least 6 characters",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedTextField(
+                    value = confirmPassword,
+                    onValueChange = {
+                        confirmPassword = it
+                        confirmPasswordError = false
+                    },
+                    label = { Text("Confirm Password") },
+                    isError = confirmPasswordError,
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                if (confirmPasswordError) {
+                    Text(
+                        text = "Passwords do not match",
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall
                     )
@@ -123,15 +153,16 @@ fun LoginScreen() {
                     onClick = {
                         emailError = !Patterns.EMAIL_ADDRESS.matcher(email).matches()
                         passwordError = password.length < 6
+                        confirmPasswordError = password != confirmPassword
 
-                        if (!emailError && !passwordError) {
-                            // TODO: Hook up Firebase auth
-                            Toast.makeText(context, "Login successful (stub)", Toast.LENGTH_SHORT).show()
+                        if (!emailError && !passwordError && !confirmPasswordError) {
+                            // TODO: Firebase registration logic
+                            Toast.makeText(context, "Registered (stub)", Toast.LENGTH_SHORT).show()
                         }
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Login")
+                    Text("Register")
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -139,20 +170,11 @@ fun LoginScreen() {
                 val context = LocalContext.current
 
                 TextButton(onClick = {
-                    context.startActivity(Intent(context, RegisterActivity::class.java))
+                    context.startActivity(Intent(context, LoginActivity::class.java))
                 }) {
-                    Text("Don't have an account? Sign up")
+                    Text("Already have an account? Login")
                 }
-
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun LoginPreview() {
-    NutrifitTheme {
-        LoginScreen()
     }
 }
