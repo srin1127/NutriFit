@@ -12,6 +12,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
@@ -20,32 +22,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.shape.RoundedCornerShape
 import com.example.nutrifit.screens.*
 import com.example.nutrifit.ui.theme.NutrifitTheme
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
-
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Snackbar
-
-import kotlinx.coroutines.launch
-
 
 class HomeActivity : ComponentActivity() {
 
     private val logoutDelayMillis: Long = 60_000 // 1 minute
     private val warningBeforeLogoutMillis: Long = 10_000 // 10 seconds
     private val handler = Handler(Looper.getMainLooper())
-    private var warningShown = false
 
     private val logoutRunnable = Runnable {
         FirebaseAuth.getInstance().signOut()
@@ -56,14 +49,13 @@ class HomeActivity : ComponentActivity() {
     }
 
     private val warningRunnable = Runnable {
-        showCountdownSnackbar()
+        // Just a placeholder - snackbar shown in Compose via state
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         if (!wasLoggedIn()) {
-            // prevent unauthorized access
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
             return
@@ -73,9 +65,7 @@ class HomeActivity : ComponentActivity() {
 
         setContent {
             NutrifitTheme {
-                HomeScreen(onLogoutWarning = {
-                    showCountdownSnackbar()
-                })
+                HomeScreen()
             }
         }
     }
@@ -90,12 +80,6 @@ class HomeActivity : ComponentActivity() {
         handler.removeCallbacks(warningRunnable)
         handler.postDelayed(warningRunnable, logoutDelayMillis - warningBeforeLogoutMillis)
         handler.postDelayed(logoutRunnable, logoutDelayMillis)
-        warningShown = false
-    }
-
-    private fun showCountdownSnackbar() {
-        // We'll trigger Composable Snackbar via state
-        warningShown = true
     }
 
     override fun onDestroy() {
@@ -104,7 +88,6 @@ class HomeActivity : ComponentActivity() {
         handler.removeCallbacks(warningRunnable)
     }
 
-    // SharedPreferences - Login Flag
     private fun wasLoggedIn(): Boolean {
         val prefs = getSharedPreferences("nutrifit_prefs", Context.MODE_PRIVATE)
         return prefs.getBoolean("is_logged_in", false)
@@ -116,143 +99,114 @@ class HomeActivity : ComponentActivity() {
     }
 }
 
-
 @Composable
-fun HomeScreen(onLogoutWarning: () -> Unit) {
+fun HomeScreen() {
     val context = LocalContext.current
     var showMenu by remember { mutableStateOf(false) }
     var showSnackbar by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
 
-    // Show logout warning snackbar
+    // Trigger snackbar after 50s
     LaunchedEffect(Unit) {
-        delay(50_000) // This is just for demo/testing
+        delay(50_000)
         showSnackbar = true
     }
 
     if (showSnackbar) {
-        LaunchedEffect(Unit) {
+        LaunchedEffect(showSnackbar) {
             snackbarHostState.showSnackbar("You will be logged out in 10 seconds due to inactivity.")
             showSnackbar = false
         }
     }
 
+    val cards = listOf(
+        Triple("Meals Breakdown", R.drawable.meal) {
+            context.startActivity(Intent(context, MealBreakdownActivity::class.java))
+        },
+        Triple("Workout Planner", R.drawable.workout) {
+            context.startActivity(Intent(context, WorkoutPlannerActivity::class.java))
+        },
+        Triple("Nutrition Tips", R.drawable.nutrition) {
+            context.startActivity(Intent(context, NutritionTipsActivity::class.java))
+        },
+        Triple("Progress Tracker", R.drawable.progress) {
+            context.startActivity(Intent(context, ProgressTrackerActivity::class.java))
+        }
+    )
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { innerPadding ->
-        Surface(modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)) {
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            listOf(Color(0xFFFFFDD0), Color(0xFFFFE4E1))
-                        )
+    ) { innerPadding -> // ✅ Accept innerPadding here
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding) // ✅ Use the innerPadding provided by Scaffold
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Color(0xFFFFFDD0), Color(0xFFFFE4E1))
                     )
-            ) {
-                Column(
+                )
+                .padding(horizontal = 24.dp, vertical = 64.dp) // ✅ Keep your custom padding
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Row(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 24.dp, vertical = 64.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .fillMaxWidth()
+                        .padding(bottom = 24.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 24.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = "Welcome to NutriFit!",
-                            style = MaterialTheme.typography.headlineMedium,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
+                    Text(
+                        text = "Welcome to NutriFit!",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
 
-                        Box {
-                            IconButton(onClick = { showMenu = true }) {
-                                Icon(
-                                    imageVector = Icons.Filled.Person,
-                                    contentDescription = "Profile",
-                                    tint = MaterialTheme.colorScheme.onBackground
-                                )
-                            }
+                    Box {
+                        IconButton(onClick = { showMenu = true }) {
+                            Icon(
+                                imageVector = Icons.Filled.Person,
+                                contentDescription = "Profile",
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
 
-                            DropdownMenu(
-                                expanded = showMenu,
-                                onDismissRequest = { showMenu = false }
-                            ) {
-                                DropdownMenuItem(
-                                    text = { Text("Edit Profile") },
-                                    onClick = {
-                                        showMenu = false
-                                        context.startActivity(Intent(context, EditProfileActivity::class.java))
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Privacy Policy") },
-                                    onClick = {
-                                        showMenu = false
-                                        context.startActivity(Intent(context, PrivacyPolicyActivity::class.java))
-                                    }
-                                )
-                            }
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Edit Profile") },
+                                onClick = {
+                                    showMenu = false
+                                    context.startActivity(Intent(context, EditProfileActivity::class.java))
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Privacy Policy") },
+                                onClick = {
+                                    showMenu = false
+                                    context.startActivity(Intent(context, PrivacyPolicyActivity::class.java))
+                                }
+                            )
                         }
                     }
+                }
 
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        FeatureCard(
-                            title = "Meals Breakdown",
-                            imageRes = R.drawable.meal,
-                            onClick = {
-                                context.startActivity(Intent(context, MealBreakdownActivity::class.java))
-                            }
-                        )
-
-                        FeatureCard(
-                            title = "Workout Planner",
-                            imageRes = R.drawable.workout,
-                            onClick = {
-                                context.startActivity(Intent(context, WorkoutPlannerActivity::class.java))
-                            }
-                        )
-
-                        FeatureCard(
-                            title = "Nutrition Tips",
-                            imageRes = R.drawable.nutrition,
-                            onClick = {
-                                context.startActivity(Intent(context, NutritionTipsActivity::class.java))
-                            }
-                        )
-
-                        FeatureCard(
-                            title = "Progress Tracker",
-                            imageRes = R.drawable.progress,
-                            onClick = {
-                                context.startActivity(Intent(context, ProgressTrackerActivity::class.java))
-                            }
-                        )
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(cards) { (title, image, onClick) ->
+                        FeatureCard(title = title, imageRes = image, onClick = onClick)
                     }
                 }
             }
         }
     }
+
 }
-
-
-
-
-
-
 
 @Composable
 fun FeatureCard(
@@ -275,10 +229,9 @@ fun FeatureCard(
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(RoundedCornerShape(20.dp)),
-                contentScale = ContentScale.Crop // Fills the entire card
+                contentScale = ContentScale.Crop
             )
 
-            // Text Overlay
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -300,13 +253,10 @@ fun FeatureCard(
     }
 }
 
-
-
 @Preview(showBackground = true)
 @Composable
 fun HomePreview() {
     NutrifitTheme {
-        HomeScreen(onLogoutWarning = {})
+        HomeScreen()
     }
 }
-
